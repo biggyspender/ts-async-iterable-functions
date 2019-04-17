@@ -1,3 +1,4 @@
+import { performance } from 'perf_hooks'
 import { pp } from 'ts-functional-pipe'
 import {
   toAsyncIterable,
@@ -10,8 +11,11 @@ import {
   flatMap,
   _toAsyncIterable,
   lastValue,
-  count
+  count,
+  interval
 } from '../src/ts-async-iterable-functions'
+import AbortController from 'abort-controller'
+import { delay } from '../src/delay'
 
 describe('toAsyncIterable', () => {
   it('works', async () => {
@@ -23,6 +27,10 @@ describe('take', () => {
   it('works', async () => {
     const val = await pp([1, 2, 3, 4], toAsyncIterable(), take(2), toArray())
     expect(val).toEqual([1, 2])
+  })
+  it('works with 0 items', async () => {
+    const val = await pp([1, 2, 3, 4], toAsyncIterable(), take(0), toArray())
+    expect(val).toHaveLength(0)
   })
 })
 describe('takeLast', () => {
@@ -78,5 +86,61 @@ describe('count', () => {
     expect(val).toEqual(2)
     const val2 = await pp([1, 2, 3, 4], toAsyncIterable(), count())
     expect(val2).toEqual(4)
+  })
+})
+describe('delay', () => {
+  it('aborts', async () => {
+    const ac = new AbortController()
+    const d = delay(100000, ac.signal)
+    // tslint:disable-next-line: no-floating-promises
+    delay(200).then(_ => ac.abort())
+    try {
+      await d
+    } catch (e) {
+      expect(e.message).toBe('aborted')
+      return
+    }
+    throw Error('unexpected')
+  })
+})
+describe('interval', () => {
+  it('works', async () => {
+    const val = await pp(interval(250), take(4), toArray())
+    expect(val).toEqual([0, 1, 2, 3])
+  })
+  it('keeps time', async () => {
+    const now = performance.now()
+    await pp(interval(250), take(4), toArray())
+    const time = performance.now() - now
+    expect(time).toBeGreaterThanOrEqual(1000)
+    expect(time).toBeLessThan(1250)
+  })
+  it('keeps time2', async () => {
+    const now = performance.now()
+    await pp(interval(250, true), take(4), toArray())
+    const time = performance.now() - now
+    expect(time).toBeGreaterThanOrEqual(750)
+    expect(time).toBeLessThan(1000)
+  })
+  it('stops', async () => {
+    try {
+      for await (const i of interval(250, true)) {
+        if (i > 2) {
+          throw Error()
+        }
+      }
+    } catch {
+      return
+    }
+    throw Error("shouldn't be here")
+  })
+  it('buffers correctly', async () => {
+    const pl = pp(interval(250, true), take(4), toArray())
+    await delay(780)
+    const now = performance.now()
+    const val = await pl
+    const time = performance.now() - now
+    expect(val).toEqual([0, 1, 2, 3])
+    expect(time).toBeLessThan(50)
   })
 })
