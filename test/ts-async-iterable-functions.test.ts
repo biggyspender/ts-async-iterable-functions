@@ -14,7 +14,6 @@ import {
   count,
   interval
 } from '../src/ts-async-iterable-functions'
-import AbortController from 'abort-controller'
 
 describe('toAsyncIterable', () => {
   it('works', async () => {
