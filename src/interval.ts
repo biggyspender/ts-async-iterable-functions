@@ -1,7 +1,7 @@
 import { createPushAsyncIterable } from 'ts-async-iterable-queue'
 
 export function interval(duration: number, immediate = false): AsyncIterable<number> {
-  const pq = createPushAsyncIterable<number>((next, _, __, addCompletionHandler) => {
+  const pq = createPushAsyncIterable<number>(({ next, addCompletionHandler }) => {
     let i = 0
     if (immediate) {
       next(i++)
