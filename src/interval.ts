@@ -1,28 +1,15 @@
-import { delay } from './delay'
-import { AbortController } from 'abort-controller'
+import { createPushAsyncIterable } from 'ts-async-iterable-queue'
+
 export function interval(duration: number, immediate = false): AsyncIterable<number> {
-  return {
-    [Symbol.asyncIterator]() {
-      const ac = new AbortController()
-      let i = 0
-      return {
-        next() {
-          return i === 0 && immediate
-            ? Promise.resolve({ value: i++, done: false })
-            : delay(duration, ac.signal).then(_ => ({ value: i++, done: false }))
-        },
-        async return() {
-          ac.abort()
-          return { done: true } as IteratorResult<number>
-        },
-        async throw(err) {
-          /* istanbul ignore next */
-          {
-            ac.abort()
-            throw err
-          }
-        }
-      }
+  const pq = createPushAsyncIterable<number>((next, _, __, addCompletionHandler) => {
+    let i = 0
+    if (immediate) {
+      next(i++)
     }
-  }
+    const intId = setInterval(() => next(i++), duration)
+    addCompletionHandler(() => {
+      clearInterval(intId)
+    })
+  })
+  return pq
 }

@@ -1,6 +1,6 @@
 {
   "name": "ts-async-iterable-functions",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
   "description": "",
   "keywords": [],
   "main": "dist/ts-async-iterable-functions.umd.js",
@@ -12,7 +12,7 @@
   "author": "Chris Sperry <christophermartinsperry@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/biggyspender/ts-async-iterable-functions"
   },
   "license": "MIT",
   "engines": {
@@ -21,7 +21,7 @@
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
@@ -114,13 +114,12 @@
     "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "ts-functional-pipe": "^2.0.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.4.3"
   },
   "dependencies": {
     "abort-controller": "^3.0.0",
-    "ts-async-iterable-queue": "^1.1.0",
+    "ts-async-iterable-queue": "^1.2.0",
     "ts-functional-pipe": "^2.0.0"
   }
 }
