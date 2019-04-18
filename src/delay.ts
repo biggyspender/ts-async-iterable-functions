@@ -1,4 +1,5 @@
 import { AbortSignal } from 'abort-controller'
+import 'promise.prototype.finally'
 export const delay = (t: number, abortSignal?: AbortSignal) => {
   let intervalId: number
   let reject: (reason: any) => void
