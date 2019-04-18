@@ -118,7 +118,7 @@ describe('interval', () => {
     }
     throw Error("shouldn't be here")
   })
-  it('buffers correctly', async () => {
+  it('buffers correctly!', async () => {
     const pl = pp(interval(250, true), take(4), toArray())
     await pp(interval(780), take(1), toArray())
     const now = performance.now()
