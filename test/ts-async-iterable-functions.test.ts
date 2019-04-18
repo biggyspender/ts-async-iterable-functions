@@ -15,7 +15,6 @@ import {
   interval
 } from '../src/ts-async-iterable-functions'
 import AbortController from 'abort-controller'
-import { delay } from '../src/delay'
 
 describe('toAsyncIterable', () => {
   it('works', async () => {
@@ -88,21 +87,7 @@ describe('count', () => {
     expect(val2).toEqual(4)
   })
 })
-describe('delay', () => {
-  it('aborts', async () => {
-    const ac = new AbortController()
-    const d = delay(100000, ac.signal)
-    // tslint:disable-next-line: no-floating-promises
-    delay(200).then(_ => ac.abort())
-    try {
-      await d
-    } catch (e) {
-      expect(e.message).toBe('aborted')
-      return
-    }
-    throw Error('unexpected')
-  })
-})
+
 describe('interval', () => {
   it('works', async () => {
     const val = await pp(interval(250), take(4), toArray())
@@ -136,7 +121,7 @@ describe('interval', () => {
   })
   it('buffers correctly', async () => {
     const pl = pp(interval(250, true), take(4), toArray())
-    await delay(780)
+    await pp(interval(780), take(1), toArray())
     const now = performance.now()
     const val = await pl
     const time = performance.now() - now
