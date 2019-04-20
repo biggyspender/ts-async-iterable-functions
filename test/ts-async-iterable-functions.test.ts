@@ -12,8 +12,12 @@ import {
   _toAsyncIterable,
   lastValue,
   count,
-  interval
+  interval,
+  merge,
+  takeUntil,
+  OneOf
 } from '../src/ts-async-iterable-functions'
+import { createPushAsyncIterable } from 'ts-async-iterable-queue'
 
 describe('toAsyncIterable', () => {
   it('works', async () => {
@@ -126,5 +130,45 @@ describe('interval', () => {
     const time = performance.now() - now
     expect(val).toEqual([0, 1, 2, 3])
     expect(time).toBeLessThan(50)
+  })
+})
+describe('takeUntil', () => {
+  it('works', async () => {
+    const c = await pp(interval(300), map(x => x), takeUntil(interval(1000)), toArray())
+    console.log(c)
+    expect(c.length).toBe(3)
+  })
+})
+
+function isFirst<T1, T2>(obj: OneOf<T1, T2>): obj is [T1, undefined] {
+  return typeof obj[0] !== 'undefined'
+}
+
+describe('merge', () => {
+  it('works', async () => {
+    const src1 = pp([1, 2, 3, 4], toAsyncIterable())
+    const src2 = pp([5, 6, 7, 8], toAsyncIterable())
+    const out: number[] = await pp(
+      src1,
+      merge(src2),
+      map((x: OneOf<number, number>) => (isFirst(x) ? x[0] : x[1])),
+      toArray()
+    )
+    // console.log(out)
+    out.sort((a, b) => a - b)
+    expect(out).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+  })
+  it('handles errors', async () => {
+    const src1 = createPushAsyncIterable<number>(s => {
+      s.error(Error('woo'))
+    })
+    const src2 = pp([5, 6, 7, 8], toAsyncIterable())
+    try {
+      await pp(src1, merge(src2), toArray())
+    } catch (e) {
+      expect(e.message).toBe('woo')
+      return
+    }
+    throw Error("shouldn't get here")
   })
 })
