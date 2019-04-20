@@ -8019,10 +8019,10 @@ trim-right@^1.0.1:
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
   integrity sha1-yy4SAwZ+DI3h9hQJS5/kVwTqYAM=
 
-ts-async-iterable-queue@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/ts-async-iterable-queue/-/ts-async-iterable-queue-3.0.0.tgz#895af7818ec01a0eadab2349ce90356c0f8224bf"
-  integrity sha512-BhbL6tfHvzgSC0ck9TFHElXx7gVrliq0+qdqI4OfI1Xbtab53x8iFP6gZnZaFQ/PywhndKkE64cK+TqEyYeofw==
+ts-async-iterable-queue@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ts-async-iterable-queue/-/ts-async-iterable-queue-3.0.1.tgz#a070658b8be9e849f239e8b6bbe9ec8624c05a32"
+  integrity sha512-cG12cSW2lbYZDUKJj0ln67h9ws3Bd51evXlnyQDh8g/HsN2mXT0iH8GOlpsgpDJxXE7lz0t6863zvMvTPcgCMA==
 
 ts-functional-pipe@^2.0.0:
   version "2.0.0"
